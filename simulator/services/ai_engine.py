@@ -61,7 +61,7 @@ def _extract_json_object(text: str) -> dict | None:
 def generate_ai_guidance(user_data: dict, calculation: dict):
 
     llm = ChatGoogleGenerativeAI(
-        model="gemini-2.5-pro",
+        model="gemini-2.5-flash",
         google_api_key=settings.GEMINI_API_KEY,
         temperature=0.3,
     )
@@ -142,5 +142,4 @@ Recovery Months (if full payment): {recovery_months}
         "guidance": guidance.strip() if isinstance(guidance, str) else "",
         "key_insights": normalized_insights,
         "safer_alternatives": normalized_alternatives,
-        "raw": raw_text,
     }
