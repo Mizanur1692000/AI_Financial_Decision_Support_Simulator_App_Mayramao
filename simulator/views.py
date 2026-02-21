@@ -24,10 +24,13 @@ class FinancialSimulationView(GenericAPIView):
             calculation
         )
 
+        ai_guidance_text = ai_guidance.get("guidance") if isinstance(ai_guidance, dict) else str(ai_guidance)
+
         return Response(
             {
                 "calculation": calculation,
                 "ai_guidance": ai_guidance,
+                "ai_guidance_text": ai_guidance_text,
             },
             status=status.HTTP_200_OK
         )

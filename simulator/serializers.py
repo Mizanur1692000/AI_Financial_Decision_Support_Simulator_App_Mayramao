@@ -1,6 +1,20 @@
 from rest_framework import serializers
 
 
+class OptionalFloatField(serializers.FloatField):
+    def to_internal_value(self, data):
+        if data in ("", None):
+            return None
+        return super().to_internal_value(data)
+
+
+class OptionalDateField(serializers.DateField):
+    def to_internal_value(self, value):
+        if value in ("", None):
+            return None
+        return super().to_internal_value(value)
+
+
 class FinancialSimulationSerializer(serializers.Serializer):
 
     monthly_income = serializers.FloatField(min_value=0)
@@ -43,6 +57,30 @@ class FinancialSimulationSerializer(serializers.Serializer):
 
     loan_duration = serializers.IntegerField(required=False, min_value=1)
     interest_rate = serializers.FloatField(required=False, min_value=0)
+
+    # Optional future goal plan inputs (used by AI guidance when provided)
+    goal_plan_name = serializers.CharField(
+        required=False,
+        allow_blank=True,
+        allow_null=True,
+        max_length=120,
+    )
+    goal_target_amount = OptionalFloatField(
+        required=False,
+        allow_null=True,
+        min_value=0,
+    )
+    goal_target_date = OptionalDateField(
+        required=False,
+        allow_null=True,
+        input_formats=["%d/%m/%Y", "%Y-%m-%d"],
+    )
+    goal_short_description = serializers.CharField(
+        required=False,
+        allow_blank=True,
+        allow_null=True,
+        max_length=500,
+    )
 
     def validate(self, data):
         if data["payment_type"] == "loan":
