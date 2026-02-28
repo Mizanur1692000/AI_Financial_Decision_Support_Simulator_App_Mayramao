@@ -1,45 +1,45 @@
 def calculate_financial_impact(data: dict):
 
     fixed_expenses = (
-        data["rent_mortgage"]
-        + data["utilities_internet"]
-        + data["subscriptions_insurance"]
+        data["rent"]
+        + data["utilities"]
+        + data["subscriptionsInsurance"]
     )
 
     baseline_expenses = (
         fixed_expenses
-        + data["existing_loan_payment"]
-        + data["variable_expenses"]
+        + data["existingLoans"]
+        + data["variableExpenses"]
     )
 
-    disposable_income = data["monthly_income"] - baseline_expenses
+    disposable_income = data["monthlyIncome"] - baseline_expenses
 
     monthly_payment = 0
-    total_payable = data["purchase_amount"]
+    total_payable = data["purchaseAmount"]
 
-    if data["payment_type"] == "loan":
-        total_payable = data["purchase_amount"] + (
-            data["purchase_amount"]
-            * (data["interest_rate"] / 100)
-            * (data["loan_duration"] / 12)
+    if data["paymentType"] == "loan":
+        total_payable = data["purchaseAmount"] + (
+            data["purchaseAmount"]
+            * (data["interestRate"] / 100)
+            * (data["loanDuration"] / 12)
         )
-        monthly_payment = total_payable / data["loan_duration"]
+        monthly_payment = total_payable / data["loanDuration"]
 
     new_disposable_income = disposable_income - monthly_payment
 
-    savings_after_purchase = data["current_savings"]
+    savings_after_purchase = data["currentSavings"]
 
-    if data["payment_type"] == "full":
-        savings_after_purchase -= data["purchase_amount"]
+    if data["paymentType"] == "full":
+        savings_after_purchase -= data["purchaseAmount"]
 
     emergency_buffer = baseline_expenses * 3
-    income_ratio = new_disposable_income / data["monthly_income"]
+    income_ratio = new_disposable_income / data["monthlyIncome"]
 
     risk_multiplier = 1.0
 
-    if data["income_stability"] == "unpredictable":
+    if data["incomeStability"] == "unpredictable":
         risk_multiplier += 0.2
-    if data["risk_tolerance"] == "safety":
+    if data["riskTolerance"] == "safety":
         risk_multiplier += 0.1
 
     adjusted_ratio = income_ratio * risk_multiplier
@@ -52,8 +52,8 @@ def calculate_financial_impact(data: dict):
         risk_level = "RISKY"
 
     recovery_months = 0
-    if data["payment_type"] == "full" and new_disposable_income > 0:
-        recovery_months = data["purchase_amount"] / new_disposable_income
+    if data["paymentType"] == "full" and new_disposable_income > 0:
+        recovery_months = data["purchaseAmount"] / new_disposable_income
 
     return {
         "fixed_expenses": round(fixed_expenses, 2),

@@ -17,15 +17,15 @@ class OptionalDateField(serializers.DateField):
 
 class FinancialSimulationSerializer(serializers.Serializer):
 
-    monthly_income = serializers.FloatField(min_value=0)
+    monthlyIncome = serializers.FloatField(min_value=0)
 
-    rent_mortgage = serializers.FloatField(min_value=0)
-    utilities_internet = serializers.FloatField(min_value=0)
-    subscriptions_insurance = serializers.FloatField(min_value=0)
+    rent = serializers.FloatField(min_value=0)
+    utilities = serializers.FloatField(min_value=0)
+    subscriptionsInsurance = serializers.FloatField(min_value=0)
 
-    existing_loan_payment = serializers.FloatField(min_value=0)
-    variable_expenses = serializers.FloatField(min_value=0)
-    current_savings = serializers.FloatField(min_value=0)
+    existingLoans = serializers.FloatField(min_value=0)
+    variableExpenses = serializers.FloatField(min_value=0)
+    currentSavings = serializers.FloatField(min_value=0)
     dependents = serializers.IntegerField(min_value=0)
 
     HOUSEHOLD_CHOICES = [
@@ -35,47 +35,47 @@ class FinancialSimulationSerializer(serializers.Serializer):
         ("not_applicable", "Not Applicable"),
     ]
 
-    INCOME_STABILITY_CHOICES = [
+    incomeStability_CHOICES = [
         ("very_stable", "Very Stable"),
         ("mostly_stable", "Mostly Stable"),
         ("sometimes_changes", "Sometimes Changes"),
         ("unpredictable", "Unpredictable"),
     ]
 
-    RISK_TOLERANCE_CHOICES = [
+    riskTolerance_CHOICES = [
         ("safety", "I Prefer Safety"),
         ("balanced", "Balanced"),
         ("risk_ok", "I'm Okay With Risk"),
     ]
 
-    household_responsibility = serializers.ChoiceField(choices=HOUSEHOLD_CHOICES)
-    income_stability = serializers.ChoiceField(choices=INCOME_STABILITY_CHOICES)
-    risk_tolerance = serializers.ChoiceField(choices=RISK_TOLERANCE_CHOICES)
+    householdResponsibilityLevel = serializers.ChoiceField(choices=HOUSEHOLD_CHOICES)
+    incomeStability = serializers.ChoiceField(choices=incomeStability_CHOICES)
+    riskTolerance = serializers.ChoiceField(choices=riskTolerance_CHOICES)
 
-    purchase_amount = serializers.FloatField(min_value=0)
-    payment_type = serializers.ChoiceField(choices=[("full", "Full"), ("loan", "Loan")])
+    purchaseAmount = serializers.FloatField(min_value=0)
+    paymentType = serializers.ChoiceField(choices=[("full", "Full"), ("loan", "Loan")])
 
-    loan_duration = serializers.IntegerField(required=False, min_value=1)
-    interest_rate = serializers.FloatField(required=False, min_value=0)
+    loanDuration = serializers.IntegerField(required=False, min_value=1)
+    interestRate = serializers.FloatField(required=False, min_value=0)
 
     # Optional future goal plan inputs (used by AI guidance when provided)
-    goal_plan_name = serializers.CharField(
+    planName = serializers.CharField(
         required=False,
         allow_blank=True,
         allow_null=True,
         max_length=120,
     )
-    goal_target_amount = OptionalFloatField(
+    targetAmount = OptionalFloatField(
         required=False,
         allow_null=True,
         min_value=0,
     )
-    goal_target_date = OptionalDateField(
+    targetDate = OptionalDateField(
         required=False,
         allow_null=True,
         input_formats=["%d/%m/%Y", "%Y-%m-%d"],
     )
-    goal_short_description = serializers.CharField(
+    goalDescription = serializers.CharField(
         required=False,
         allow_blank=True,
         allow_null=True,
@@ -83,8 +83,8 @@ class FinancialSimulationSerializer(serializers.Serializer):
     )
 
     def validate(self, data):
-        if data["payment_type"] == "loan":
-            if "loan_duration" not in data or "interest_rate" not in data:
+        if data["paymentType"] == "loan":
+            if "loanDuration" not in data or "interestRate" not in data:
                 raise serializers.ValidationError(
                     "Loan duration and interest rate required for loan."
                 )

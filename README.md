@@ -1,4 +1,4 @@
-# AI Financial Decision Support Simulator (JVAI)
+# AI Financial Decision Support Simulator
 
 A Django + Django REST Framework (DRF) API that simulates the financial impact of a purchase (full payment or loan) and returns **(1)** a deterministic calculation and **(2)** AI guidance generated with Google Gemini via LangChain.
 
@@ -90,60 +90,60 @@ Runs the financial simulation and returns:
 
 Required fields:
 
-- `monthly_income` (float, >= 0)
-- `rent_mortgage` (float, >= 0)
-- `utilities_internet` (float, >= 0)
-- `subscriptions_insurance` (float, >= 0)
-- `existing_loan_payment` (float, >= 0)
-- `variable_expenses` (float, >= 0)
-- `current_savings` (float, >= 0)
+- `monthlyIncome` (float, >= 0)
+- `rent` (float, >= 0)
+- `utilities` (float, >= 0)
+- `subscriptionsInsurance` (float, >= 0)
+- `existingLoans` (float, >= 0)
+- `variableExpenses` (float, >= 0)
+- `currentSavings` (float, >= 0)
 - `dependents` (int, >= 0)
-- `household_responsibility` (choice)
+- `householdResponsibilityLevel` (choice)
   - `all_or_most` | `half` | `small_part` | `not_applicable`
-- `income_stability` (choice)
+- `incomeStability` (choice)
   - `very_stable` | `mostly_stable` | `sometimes_changes` | `unpredictable`
-- `risk_tolerance` (choice)
+- `riskTolerance` (choice)
   - `safety` | `balanced` | `risk_ok`
-- `purchase_amount` (float, >= 0)
-- `payment_type` (choice)
+- `purchaseAmount` (float, >= 0)
+- `paymentType` (choice)
   - `full` | `loan`
 
-Loan-only fields (required when `payment_type="loan"`):
+Loan-only fields (required when `paymentType="loan"`):
 
-- `loan_duration` (int, >= 1) — number of months
-- `interest_rate` (float, >= 0) — annual rate, percent
+- `loanDuration` (int, >= 1) — number of months
+- `interestRate` (float, >= 0) — annual rate, percent
 
 Optional “Future Goal Plan” fields (used only to enrich AI guidance):
 
-- `goal_plan_name` (string, optional)
-- `goal_target_amount` (float, optional)
-- `goal_target_date` (date, optional)
+- `planName` (string, optional)
+- `targetAmount` (float, optional)
+- `targetDate` (date, optional)
   - accepted formats: `DD/MM/YYYY` or `YYYY-MM-DD`
-- `goal_short_description` (string, optional)
+- `goalDescription` (string, optional)
 
 #### Example request (PowerShell)
 
 ```powershell
 $body = @{
-  monthly_income = 4500
-  rent_mortgage = 1400
-  utilities_internet = 220
-  subscriptions_insurance = 180
-  existing_loan_payment = 150
-  variable_expenses = 900
-  current_savings = 6000
+  monthlyIncome = 4500
+  rent = 1400
+  utilities = 220
+  subscriptionsInsurance = 180
+  existingLoans = 150
+  variableExpenses = 900
+  currentSavings = 6000
   dependents = 1
-  household_responsibility = "half"
-  income_stability = "mostly_stable"
-  risk_tolerance = "balanced"
-  purchase_amount = 2500
-  payment_type = "loan"
-  loan_duration = 12
-  interest_rate = 18
-  goal_plan_name = "Emergency fund"
-  goal_target_amount = 10000
-  goal_target_date = "2026-12-31"
-  goal_short_description = "Build a 3–6 month safety net."
+  householdResponsibilityLevel = "half"
+  incomeStability = "mostly_stable"
+  riskTolerance = "balanced"
+  purchaseAmount = 2500
+  paymentType = "loan"
+  loanDuration = 12
+  interestRate = 18
+  planName = "Emergency fund"
+  targetAmount = 10000
+  targetDate = "2026-12-31"
+  goalDescription = "Build a 3–6 month safety net."
 } | ConvertTo-Json
 
 Invoke-RestMethod -Method Post -Uri "http://127.0.0.1:8000/api/simulate/" -ContentType "application/json" -Body $body
@@ -183,11 +183,11 @@ Implemented in `simulator/services/calculator.py`:
 - **Fixed expenses** = rent/mortgage + utilities/internet + subscriptions/insurance
 - **Baseline expenses** = fixed expenses + existing loan payment + variable expenses
 - **Baseline disposable income** = monthly income − baseline expenses
-- If `payment_type="loan"`:
-  - **Total payable** = purchase + purchase × (interest_rate/100) × (loan_duration/12)
-  - **Monthly payment** = total payable / loan_duration
+- If `paymentType="loan"`:
+  - **Total payable** = purchase + purchase × (interestRate/100) × (loanDuration/12)
+  - **Monthly payment** = total payable / loanDuration
 - **New disposable income** = baseline disposable income − monthly payment
-- If `payment_type="full"`:
+- If `paymentType="full"`:
   - **Savings after purchase** = current savings − purchase amount
 - **Emergency buffer** = baseline expenses × 3
 - Risk level is derived from the adjusted disposable-income ratio and savings vs emergency buffer.

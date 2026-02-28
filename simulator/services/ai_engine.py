@@ -16,10 +16,10 @@ def _assessment_title_from_risk_level(risk_level: str) -> str:
 
 
 def _build_goal_plan_section(user_data: dict) -> str:
-    plan_name = user_data.get("goal_plan_name")
-    target_amount = user_data.get("goal_target_amount")
-    target_date = user_data.get("goal_target_date")
-    short_description = user_data.get("goal_short_description")
+    plan_name = user_data.get("planName")
+    target_amount = user_data.get("targetAmount")
+    target_date = user_data.get("targetDate")
+    short_description = user_data.get("goalDescription")
 
     has_any = any(
         v not in (None, "")
@@ -88,10 +88,10 @@ Rules:
 - If a Future Goal Plan is provided, incorporate it (impact on goal timeline and adjustments).
 
 User Profile:
-Income: {monthly_income}
-Dependents: {dependents}
-Income Stability: {income_stability}
-Risk Tolerance: {risk_tolerance}
+Income: {monthlyIncome}
+dependents: {dependents}
+Income Stability: {incomeStability}
+Risk Tolerance: {riskTolerance}
 
 {goal_plan_section}
 
